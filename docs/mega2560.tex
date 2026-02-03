@@ -1,0 +1,80 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\geometry{a4paper, margin=1in}
+
+\title{Adaptación del Proyecto LC Meter para Arduino Mega 2560 R3}
+\author{Documentación del Proyecto}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+Es totalmente posible adaptar este proyecto para utilizar un \textbf{Arduino Mega 2560 R3}. Basado en las librerías utilizadas, el soporte para el microcontrolador ATmega2560 ya está incluido, por lo que la adaptación consiste principalmente en cambios de cableado (hardware) y verificación de pines.
+
+\section{Cambios de Hardware Requeridos}
+
+\subsection{1. Entrada de Frecuencia (Librería FreqCount)}
+La librería \texttt{FreqCount} utiliza un temporizador de hardware específico para contar pulsos. Este pin cambia dependiendo de la placa utilizada.
+
+\begin{itemize}
+    \item \textbf{Arduino Nano:} Usa el \textbf{Pin 5} (Timer 1).
+    \item \textbf{Arduino Mega:} La librería define automáticamente el uso del \textbf{Pin 47} (Timer 5).
+\end{itemize}
+
+\textbf{Acción:} Debes conectar la señal de frecuencia (proveniente del comparador LM311) al \textbf{Pin 47} del Arduino Mega en lugar del Pin 5.
+
+\subsection{2. Pantalla LCD (I2C)}
+La comunicación I2C tiene pines dedicados diferentes en el Mega.
+
+\begin{itemize}
+    \item \textbf{Arduino Nano:} SDA es A4, SCL es A5.
+    \item \textbf{Arduino Mega:} SDA es el pin \textbf{20}, SCL es el pin \textbf{21}.
+\end{itemize}
+
+\textbf{Acción:} Conecta los pines SDA y SCL de tu pantalla LCD a los pines \textbf{20 y 21} del Arduino Mega respectivamente.
+
+\subsection{3. Otros Componentes (Relé y Botones)}
+El resto de los pines digitales (para el relé de calibración y los botones) deberían funcionar igual si utilizas los mismos números de pin definidos en el código original (por ejemplo, D2, D3, etc.), ya que el mapeo es directo en el entorno Arduino.
+
+\textit{Nota:} Al igual que en el Nano, la librería \texttt{FreqCount} utiliza el \texttt{TIMER2} para la ventana de tiempo. Esto significa que los pines \textbf{9 y 10} perderán su capacidad de PWM (\texttt{analogWrite}), pero pueden usarse como pines digitales normales.
+
+\section{Resumen de Conexiones}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Función} & \textbf{Arduino Nano} & \textbf{Arduino Mega 2560} \\ \midrule
+Entrada Frecuencia & Pin 5 & \textbf{Pin 47} \\
+LCD SDA & Pin A4 & \textbf{Pin 20} \\
+LCD SCL & Pin A5 & \textbf{Pin 21} \\ \bottomrule
+\end{tabular}
+\caption{Tabla comparativa de conexiones críticas.}
+\label{tab:conexiones}
+\end{table}
+
+\section{Notas de Software}
+No es necesario modificar los archivos de la librería \texttt{FreqCount}, ya que el soporte ya está incluido en el código fuente (\texttt{FreqCountTimers.h}). Asegúrate de seleccionar "Arduino Mega or Mega 2560" en tu IDE antes de subir el código.
+
+\section{Consideraciones sobre el PCB}
+El diseño de PCB incluido en este proyecto está creado específicamente para el factor de forma del \textbf{Arduino Nano}.
+
+\begin{itemize}
+    \item \textbf{Factor de Forma:} El Arduino Mega 2560 es físicamente mucho más grande y tiene una disposición de pines diferente. No encajará en los zócalos diseñados para el Nano.
+    \item \textbf{Incompatibilidad Directa:} Debido a los cambios de pines necesarios (Pin 47 para frecuencia, 20/21 para I2C), las pistas del PCB original no conducen a los lugares correctos en el Mega.
+\end{itemize}
+
+\textbf{Recomendación:} Para usar un Arduino Mega, no se puede utilizar el archivo de fabricación de PCB actual. Se recomienda:
+\begin{enumerate}
+    \item Utilizar una protoboard o placa de pruebas para realizar el cableado manualmente según la tabla de conexiones.
+    \item Rediseñar el PCB en KiCad si se desea una solución permanente, adaptando el diseño para que funcione como un "Shield" de Arduino Mega.
+\end{enumerate}
+
+\end{document}
