@@ -79,7 +79,7 @@ Check out the project here: [**Teknotrek**](https://www.youtube.com/@TeknoTrek)
 
 This project is perfect for anyone interested in electronics, DIY tools, or Arduino projects. Whether you are a beginner or an experienced maker,this LC Meter provides a hands-on learning experience and a functional tool for your electronics toolkit!
 
-# Introducción
+# Utilización de Arduino Mega 2560 R3.
 Es totalmente posible adaptar este proyecto para utilizar un **Arduino Mega 2560 R3**. Basado en las librerías utilizadas, el soporte para el microcontrolador ATmega2560 ya está incluido, por lo que la adaptación consiste principalmente en cambios de cableado (hardware) y verificación de pines.
 
 # Cambios de Hardware Requeridos
